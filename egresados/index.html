@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>EGRESADOS ANAHUAC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxXsqTNPvRp4R5ifyeXwdEgHdD422nudk&callback=initMap" async defer></script>
+  <script src="./script.js"></script>
+  <style>
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+    }
+
+    .overlay-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .overlay-content form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+    }
+  </style>
+  <script>
+    var apiKey = 'YOUR_API_KEY';
+
+    function filterEgresados() {
+      var input = document.getElementById('search-input');
+      var filter = input.value.toUpperCase();
+      var cards = document.getElementsByClassName('card');
+
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var nombre = card.getElementsByTagName('h3')[0];
+        var textoNombre = nombre.textContent || nombre.innerText;
+
+        if (textoNombre.toUpperCase().indexOf(filter) > -1) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      }
+    }
+
+    function showAddCardOverlay(event) {
+      event.stopPropagation();
+      var overlay = document.getElementById('add-card-overlay');
+      overlay.style.display = 'flex';
+    }
+
+    function hideAddCardOverlay(event) {
+      event.stopPropagation();
+      var overlay = document.getElementById('add-card-overlay');
+      overlay.style.display = 'none';
+    }
+
+    function confirmDelete(event) {
+      event.stopPropagation();
+      var confirmOverlay = document.getElementById('confirm-dialog-overlay');
+      confirmOverlay.style.display = 'flex';
+    }
+
+    function cancelDelete(event) {
+      event.stopPropagation();
+      var confirmOverlay = document.getElementById('confirm-dialog-overlay');
+      confirmOverlay.style.display = 'none';
+    }
+
+    function agregarEgresado() {
+      var nombre = document.getElementById("nombre").value;
+      var egreso = document.getElementById("egreso").value;
+      var carrera = document.getElementById("carrera").value;
+      var empresa = document.getElementById("empresa").value;
+      var puesto = document.getElementById("puesto").value;
+      var foto = document.getElementById("foto").value;
+
+      // Realizar la lógica para agregar el egresado (enviar los datos al servidor, etc.)
+
+      // Una vez agregado, puedes cerrar el formulario
+      hideAddCardOverlay();
+    }
+  </script>
+</head>
+
+<body>
+  <h1>EGRESADOS ANAHUAC</h1>
+
+  <div id="search-container">
+    <input type="text" id="search-input" placeholder="Buscar..." onkeyup="filterEgresados()">
+  </div>
+
+  <div id="map-container"></div>
+
+  <div id="card-container"></div>
+
+  <div id="add-button" class="fab" onclick="showAddCardOverlay(event)">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <div id="add-card-overlay" class="overlay" onclick="hideAddCardOverlay(event)">
+    <div class="overlay-content">
+      <form id="add-card-form" onclick="event.stopPropagation();">
+        <h2>Agregar Egresado</h2>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+        <label for="egreso">Año de egreso:</label>
+        <input type="text" id="egreso" name="egreso" required>
+        <label for="carrera">Carrera:</label>
+        <input type="text" id="carrera" name="carrera" required>
+        <label for="empresa">Empresa actual:</label>
+        <input type="text" id="empresa" name="empresa">
+        <label for="puesto">Puesto actual:</label>
+        <input type="text" id="puesto" name="puesto">
+        <label for="foto">Foto:</label>
+        <input type="file" id="foto" name="foto">
+        <button type="submit">Agregar</button>
+        <button type="button" onclick="hideAddCardOverlay(event)">Cancelar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="confirm-dialog-overlay" class="overlay" onclick="cancelDelete(event)">
+    <div class="overlay-content">
+      <div id="confirm-dialog">
+        <h2>¿Estás seguro de que deseas eliminar este egresado?</h2>
+        <button id="confirm-delete">Sí</button>
+        <button id="cancel-delete">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
